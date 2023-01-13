@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class NumberConverter {
 	private final Map<Character, Integer> roman = new HashMap<Character, Integer>() {
+		private static final long serialVersionUID = 1L;
 
 		{
 			put('I', 1);
@@ -25,6 +26,12 @@ public class NumberConverter {
 		}
 	};
 
+	/**
+	 * GET /convert-to-roman/{input}
+	 * 
+	 * @param input
+	 * @return converted Roman string as plain/text response body
+	 */
 	@GetMapping(path = "/convert-to-roman/{input}", produces = "plain/text")
 	public @ResponseBody String convertToRoman(@PathVariable Integer input) {
 		validateNumber(input);
@@ -32,10 +39,16 @@ public class NumberConverter {
 		return String.format("%s", roman);
 	}
 
+	/**
+	 * GET /convert-to-number/{input}
+	 * 
+	 * @param input
+	 * @return converted Number string as plain/text response body
+	 */
 	@GetMapping(path = "/convert-to-number/{input}", produces = "plain/text")
 	public @ResponseBody String convertToNumber(@PathVariable String input) {
 		validateRoman(input);
-		if(input.equals("M(V)")) {
+		if (input.equals("M(V)")) {
 			return "4000";
 		}
 		int result = romanToNumber(input);
@@ -53,12 +66,12 @@ public class NumberConverter {
 		if (input == null) {
 			throw new NumberFormatException("Invalid Roman numeral");
 		}
-		if(input.equals("M(V)")) {
+		if (input.equals("M(V)")) {
 			return;
 		}
 		String regex = "^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$";
 		Pattern p = Pattern.compile(regex);
-	
+
 		Matcher m = p.matcher(input);
 		if (!m.matches()) {
 			throw new NumberFormatException("Invalid Roman numeral");
